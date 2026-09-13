@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12" x-data="cameraStream()" x-init="initWebSocket()">
+    <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             <!-- Camera Configuration -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -15,9 +15,8 @@
                         <p class="mt-1 text-sm text-gray-600">Terhubung ke Relay WebSocket untuk melihat kamera dari mana saja.</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <span class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium" 
-                              :class="connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
-                              x-text="connected ? 'Connected' : 'Disconnected'">
+                        <span id="connection-status" class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-red-100 text-red-800">
+                            Disconnected
                         </span>
                     </div>
                 </div>
@@ -37,9 +36,9 @@
                     </div>
 
                     <div class="relative w-full rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden" style="min-height: 480px;">
-                        <img x-show="frameUrl" :src="frameUrl" alt="Live ESP32 Camera Stream" class="w-full max-w-3xl object-contain rounded" style="display: none;"/>
+                        <img id="camera-stream-img" alt="Live ESP32 Camera Stream" class="w-full max-w-3xl object-contain rounded" style="display: none;"/>
                         
-                        <div x-show="!connected && !frameUrl" class="text-gray-400">
+                        <div id="waiting-text" class="text-gray-400">
                             Menunggu koneksi dari kamera ESP32...
                         </div>
                     </div>
@@ -48,50 +47,67 @@
         </div>
     </div>
 
-    <!-- Alpine Component for WebSocket -->
+    <!-- Vanilla JS Component for WebSocket -->
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('cameraStream', () => ({
-                connected: false,
-                frameUrl: null,
-                ws: null,
-                
-                initWebSocket() {
-                    // MENGGUNAKAN IP LANGSUNG UNTUK BYPASS CLOUDFLARE DI BROWSER
-                    const serverUrl = 'ws://72.61.143.123:8880';
-                    
-                    this.ws = new WebSocket(serverUrl);
-                    this.ws.binaryType = 'blob';
+        document.addEventListener('DOMContentLoaded', () => {
+            const serverUrl = 'ws://72.61.143.123:8880';
+            
+            const statusBadge = document.getElementById('connection-status');
+            const warningBox = document.getElementById('mixed-content-warning');
+            const cameraImg = document.getElementById('camera-stream-img');
+            const waitingText = document.getElementById('waiting-text');
+            
+            let ws = null;
+            let currentFrameUrl = null;
 
-                    this.ws.onopen = () => {
-                        console.log('Connected to WebSocket Relay Server');
-                        this.connected = true;
-                        document.getElementById('mixed-content-warning').style.display = 'none';
-                    };
-
-                    this.ws.onmessage = (event) => {
-                        // Menerima frame berupa Blob dari server
-                        if (event.data instanceof Blob) {
-                            if (this.frameUrl) {
-                                URL.revokeObjectURL(this.frameUrl); // Bersihkan URL lama
-                            }
-                            this.frameUrl = URL.createObjectURL(event.data);
-                        }
-                    };
-
-                    this.ws.onclose = () => {
-                        console.log('Disconnected from server. Retrying...');
-                        this.connected = false;
-                        setTimeout(() => this.initWebSocket(), 3000);
-                    };
-                    
-                    this.ws.onerror = (err) => {
-                        console.error('WebSocket Error:', err);
-                        this.ws.close();
-                        document.getElementById('mixed-content-warning').style.display = 'block';
-                    };
+            function updateStatus(connected) {
+                if (connected) {
+                    statusBadge.textContent = 'Connected';
+                    statusBadge.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-green-100 text-green-800';
+                    waitingText.style.display = 'none';
+                    warningBox.style.display = 'none';
+                } else {
+                    statusBadge.textContent = 'Disconnected';
+                    statusBadge.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-red-100 text-red-800';
+                    waitingText.style.display = 'block';
+                    cameraImg.style.display = 'none';
                 }
-            }))
-        })
+            }
+
+            function connectWebSocket() {
+                ws = new WebSocket(serverUrl);
+                ws.binaryType = 'blob';
+
+                ws.onopen = () => {
+                    console.log('Connected to WebSocket Relay Server');
+                    updateStatus(true);
+                };
+
+                ws.onmessage = (event) => {
+                    if (event.data instanceof Blob) {
+                        if (currentFrameUrl) {
+                            URL.revokeObjectURL(currentFrameUrl);
+                        }
+                        currentFrameUrl = URL.createObjectURL(event.data);
+                        cameraImg.src = currentFrameUrl;
+                        cameraImg.style.display = 'block';
+                    }
+                };
+
+                ws.onclose = () => {
+                    console.log('Disconnected from server. Retrying in 3 seconds...');
+                    updateStatus(false);
+                    setTimeout(connectWebSocket, 3000);
+                };
+                
+                ws.onerror = (err) => {
+                    console.error('WebSocket Error:', err);
+                    ws.close();
+                    warningBox.style.display = 'block';
+                };
+            }
+
+            connectWebSocket();
+        });
     </script>
 </x-app-layout>
