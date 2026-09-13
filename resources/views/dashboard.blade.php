@@ -67,7 +67,7 @@
                 }
             }
 
-            // Fungsi untuk merefresh gambar setiap 250ms (4 FPS)
+            // Fungsi untuk merefresh gambar secepat mungkin (sekitar 12 FPS)
             setInterval(() => {
                 const imgUrl = '/stream.jpg?t=' + new Date().getTime();
                 
@@ -79,7 +79,7 @@
                     updateStatus(true);
                 };
                 tempImg.onerror = () => {
-                    // Jika gambar gagal dimuat, biarkan saja. Status akan berubah menjadi disconnected jika terlalu lama.
+                    // Jika gambar gagal dimuat, biarkan saja.
                 };
                 tempImg.src = imgUrl;
 
@@ -87,7 +87,7 @@
                 if (Date.now() - lastSuccessTime > 3000) {
                     updateStatus(false);
                 }
-            }, 250);
+            }, 80); // Refresh setiap 80ms (sangat cepat)
         });
     </script>
 </x-app-layout>
