@@ -1,21 +1,32 @@
 const http = require('http');
-const WebSocket = require('ws');
+const fs = require('fs');
+const path = require('path');
 
-// 1. Buat HTTP Server biasa untuk menerima gambar dari ESP32
+const PORT = 8880;
+const IMAGE_PATH = path.join(__dirname, 'public', 'camera.jpg');
+
 const server = http.createServer((req, res) => {
     if (req.method === 'POST' && req.url === '/upload') {
         let body = [];
-        req.on('data', chunk => body.push(chunk));
+        
+        req.on('data', chunk => {
+            body.push(chunk);
+        });
+        
         req.on('end', () => {
             const imageBuffer = Buffer.concat(body);
-            // Broadcast ke semua browser via WebSocket!
-            wss.clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(imageBuffer);
+            
+            // Simpan gambar langsung ke folder public Laravel!
+            fs.writeFile(IMAGE_PATH, imageBuffer, (err) => {
+                if (err) {
+                    console.error('Gagal menyimpan gambar:', err);
+                    res.writeHead(500);
+                    res.end('Error');
+                } else {
+                    res.writeHead(200);
+                    res.end('OK');
                 }
             });
-            res.writeHead(200);
-            res.end('OK');
         });
     } else {
         res.writeHead(404);
@@ -23,13 +34,7 @@ const server = http.createServer((req, res) => {
     }
 });
 
-// 2. Tumpangkan WebSocket Server di atas HTTP Server untuk Browser
-const wss = new WebSocket.Server({ server });
-
-wss.on('connection', (ws) => {
-    console.log('[+] Dashboard Browser Terhubung');
-});
-
-server.listen(8880, () => {
-    console.log('Server Pamungkas Berjalan di Port 8880!');
+server.listen(PORT, () => {
+    console.log(`[+] SERVER KAMERA JALAN DI PORT ${PORT}`);
+    console.log(`[+] Menyimpan gambar ke: ${IMAGE_PATH}`);
 });

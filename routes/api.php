@@ -21,6 +21,7 @@ Route::post('/upload-frame', function (Request $request) {
 });
 
 Route::get('/servos/status', [ServoController::class, 'status']);
+Route::get('/servo/status', [ServoController::class, 'status']); // Alias untuk ESP32
 Route::post('/servos/wifi', [ServoController::class, 'updateWifi']);
 Route::post('/servos/{id}/angle', [ServoController::class, 'setAngle']);
 Route::post('/servo-rules', [ServoController::class, 'saveRule']);
