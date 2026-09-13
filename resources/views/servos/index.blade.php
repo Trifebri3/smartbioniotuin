@@ -204,6 +204,40 @@
             </div>
 
         </div>
+
+            <!-- WiFi Configuration Panel -->
+            <div class="bg-white/90 backdrop-blur-xl border border-gray-100 overflow-hidden shadow-xl shadow-cyan-100/50 sm:rounded-2xl p-8 relative mt-8">
+                <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                     <svg class="w-32 h-32 text-cyan-900" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-2xl font-extrabold text-gray-800 flex items-center">
+                        <span class="bg-gradient-to-r from-cyan-500 to-blue-600 text-transparent bg-clip-text">Pengaturan WiFi ESP32</span>
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-2 font-medium">Ubah jaringan WiFi tujuan ESP32 secara nirkabel dari dashboard. ESP32 akan menyimpannya dan otomatis restart.</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row gap-6 mb-4 relative z-10">
+                    <div class="flex-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Nama WiFi (SSID)</label>
+                        <input type="text" x-model="wifiSsid" placeholder="Contoh: WiFi Rumahku" class="w-full rounded-xl border-gray-200 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 bg-gray-50 py-3">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Password WiFi</label>
+                        <input type="password" x-model="wifiPassword" placeholder="Kosongkan jika tidak ada password" class="w-full rounded-xl border-gray-200 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 bg-gray-50 py-3">
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-6 relative z-10">
+                    <button @click="updateWifi" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-cyan-200 transition-all duration-200 active:scale-95 flex items-center justify-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
+                        Kirim ke ESP32
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <!-- Notification Toast -->
@@ -245,6 +279,37 @@
                 ruleActions: [],
                 tempActionType: 'angle',
                 tempActionValue: 0,
+                
+                wifiSsid: '',
+                wifiPassword: '',
+
+                async updateWifi() {
+                    if (!this.wifiSsid) return showToast('Nama WiFi (SSID) tidak boleh kosong!', 'error');
+                    
+                    try {
+                        const response = await fetch('/api/wifi/config', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                ssid: this.wifiSsid,
+                                password: this.wifiPassword
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            showToast('Perintah WiFi terkirim! ESP32 akan segera restart.');
+                            this.wifiSsid = '';
+                            this.wifiPassword = '';
+                        } else {
+                            showToast('Gagal mengirim perintah WiFi.', 'error');
+                        }
+                    } catch (error) {
+                        showToast('Error koneksi ke server.', 'error');
+                    }
+                },
 
                 async setServo(servoId, angle) {
                     if(servoId === 1) this.servo1Status = 'Menyimpan...';

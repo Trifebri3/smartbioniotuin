@@ -12,3 +12,4 @@ use App\Http\Controllers\Api\ServoController;
 Route::get('/servo/status', [ServoController::class, 'status']);
 Route::post('/servo/{id}/set', [ServoController::class, 'setAngle']);
 Route::post('/servo/rules', [ServoController::class, 'saveRule']);
+Route::post('/wifi/config', [ServoController::class, 'updateWifi']);
