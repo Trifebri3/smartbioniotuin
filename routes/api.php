@@ -36,7 +36,7 @@ Route::post('/camera/upload', function (Request $request) {
     $image = $request->getContent();
     if ($image) {
         // Simpan langsung ke folder public agar bisa diakses browser
-        file_put_contents(public_path('stream.jpg'), $image);
+        file_put_contents(public_path('camera.jpg'), $image);
     }
     return response()->json(['status' => 'success']);
 });
