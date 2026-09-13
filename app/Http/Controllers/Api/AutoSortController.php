@@ -82,7 +82,7 @@ class AutoSortController extends Controller
 
                 return response()->json([
                     'status' => 'success',
-                    'detection' => $result['category'], // Gunakan kategori bersih, bukan teks mentah AI
+                    'detection' => $aiText, // Tampilkan Teks ASLI dari Gemini agar kita tahu dia jawab apa
                     'action' => $result['message'],
                     'servo1' => $result['servo1'],
                     'servo2' => $result['servo2']
