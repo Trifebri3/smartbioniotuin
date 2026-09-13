@@ -53,7 +53,7 @@ class AutoSortController extends Controller
 
         // Hit Gemini API (Vision model)
         try {
-            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={$apiKey}", [
+            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={$apiKey}", [
                 'contents' => [
                     [
                         'parts' => [
