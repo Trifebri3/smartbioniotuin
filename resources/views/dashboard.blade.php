@@ -41,7 +41,8 @@
                         <!-- Efek grid background saat loading -->
                         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNFMkU4RjAiLz48L3N2Zz4=')] opacity-50"></div>
                         
-                        <img id="camera-stream-img" alt="Live ESP32 Camera Stream" class="w-full h-full object-cover relative z-10" style="display: none;"/>
+                        <!-- Menggunakan Canvas agar berperilaku persis seperti Video -->
+                        <canvas id="camera-canvas" width="640" height="480" class="w-full h-full object-cover relative z-10" style="display: none;"></canvas>
                         
                         <div id="waiting-text" class="text-slate-400 font-medium relative z-10 flex flex-col items-center gap-3 animate-pulse">
                             <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -53,60 +54,45 @@
         </div>
     </div>
 
-    <!-- Vanilla JS Component for Polling -->
+    <!-- Canvas Rendering Component -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const statusBadge = document.getElementById('connection-status');
             const warningBox = document.getElementById('mixed-content-warning');
-            const cameraImg = document.getElementById('camera-stream-img');
+            const canvas = document.getElementById('camera-canvas');
+            const ctx = canvas.getContext('2d');
             const waitingText = document.getElementById('waiting-text');
             
-            // Set status jadi Connected karena ini pakai HTTP biasa
+            // Set status jadi Connected 
             statusBadge.textContent = 'API Polling Active';
-            statusBadge.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-blue-100 text-blue-800';
+            statusBadge.className = 'inline-flex items-center rounded-full px-4 py-1.5 text-sm font-semibold bg-emerald-100 text-emerald-700 transition-colors';
             waitingText.style.display = 'none';
             warningBox.style.display = 'none';
             
-            // Tampilkan gambar
-            cameraImg.style.display = 'block';
+            // Tampilkan Canvas
+            canvas.style.display = 'block';
 
-            // Fungsi Real-Time sesungguhnya menggunakan Fetch API (Anti-Macet)
-            let currentFrameUrl = null;
-            
-            async function fetchNextFrame() {
-                // Gunakan AbortController untuk membatalkan jika request menggantung (di-block Cloudflare)
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout 2 detik
-
-                try {
-                    const response = await fetch('/camera.jpg?time=' + new Date().getTime(), {
-                        signal: controller.signal,
-                        cache: 'no-store'
-                    });
+            // Fungsi rendering ke Canvas (Persis seperti Video Player)
+            function fetchNextFrame() {
+                const img = new Image();
+                img.crossOrigin = "Anonymous"; // Hindari CORS issues di Canvas
+                img.src = '/camera.jpg?time=' + new Date().getTime();
+                
+                img.onload = () => {
+                    // Gambar sukses dimuat -> Lukis ke layar seketika! (0 kedip)
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    clearTimeout(timeoutId);
-
-                    if (response.ok) {
-                        const blob = await response.blob();
-                        
-                        // Hapus memori gambar sebelumnya agar RAM tidak bocor
-                        if (currentFrameUrl) {
-                            URL.revokeObjectURL(currentFrameUrl);
-                        }
-                        
-                        currentFrameUrl = URL.createObjectURL(blob);
-                        cameraImg.src = currentFrameUrl;
-                    }
-                } catch (error) {
-                    // Jika error atau timeout, abaikan dan coba lagi
-                    console.log('Frame tertunda, mencoba lagi...');
-                }
-
-                // Ambil frame berikutnya setelah jeda 100ms (~10 FPS, aman dari blokir Cloudflare)
-                setTimeout(fetchNextFrame, 100);
+                    // Segera tarik frame selanjutnya (10 FPS = 100ms)
+                    setTimeout(fetchNextFrame, 100);
+                };
+                
+                img.onerror = () => {
+                    // Jika gambar gagal dimuat (misal file sedang ditimpa ESP32), abaikan dan coba lagi
+                    setTimeout(fetchNextFrame, 100);
+                };
             }
 
-            // Mulai putaran pengambil gambar
+            // Nyalakan Mesin Video!
             fetchNextFrame();
         });
     </script>
