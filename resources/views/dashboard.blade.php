@@ -70,11 +70,44 @@
             // Tampilkan gambar
             cameraImg.style.display = 'block';
 
-            // Memaksa browser merefresh gambar sangat cepat (tiap 50 ms)
-            setInterval(() => {
-                // Tambahkan timestamp di belakang URL agar browser tidak pakai cache
-                cameraImg.src = '/camera.jpg?time=' + new Date().getTime();
-            }, 50);
+            // Fungsi Real-Time sesungguhnya menggunakan Fetch API (Anti-Macet)
+            let currentFrameUrl = null;
+            
+            async function fetchNextFrame() {
+                // Gunakan AbortController untuk membatalkan jika request menggantung (di-block Cloudflare)
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 2000); // Timeout 2 detik
+
+                try {
+                    const response = await fetch('/camera.jpg?time=' + new Date().getTime(), {
+                        signal: controller.signal,
+                        cache: 'no-store'
+                    });
+                    
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        
+                        // Hapus memori gambar sebelumnya agar RAM tidak bocor
+                        if (currentFrameUrl) {
+                            URL.revokeObjectURL(currentFrameUrl);
+                        }
+                        
+                        currentFrameUrl = URL.createObjectURL(blob);
+                        cameraImg.src = currentFrameUrl;
+                    }
+                } catch (error) {
+                    // Jika error atau timeout, abaikan dan coba lagi
+                    console.log('Frame tertunda, mencoba lagi...');
+                }
+
+                // Ambil frame berikutnya setelah jeda 100ms (~10 FPS, aman dari blokir Cloudflare)
+                setTimeout(fetchNextFrame, 100);
+            }
+
+            // Mulai putaran pengambil gambar
+            fetchNextFrame();
         });
     </script>
 </x-app-layout>
