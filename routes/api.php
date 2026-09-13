@@ -22,9 +22,14 @@ Route::post('/upload-frame', function (Request $request) {
 
 Route::get('/servos/status', [ServoController::class, 'status']);
 Route::get('/servo/status', [ServoController::class, 'status']); // Alias untuk ESP32
+
 Route::post('/servos/wifi', [ServoController::class, 'updateWifi']);
+
 Route::post('/servos/{id}/angle', [ServoController::class, 'setAngle']);
+Route::post('/servo/{id}/set', [ServoController::class, 'setAngle']); // Alias untuk Web UI
+
 Route::post('/servo-rules', [ServoController::class, 'saveRule']);
+Route::post('/servo/rules', [ServoController::class, 'saveRule']); // Alias untuk Web UI
 
 // Endpoint untuk menerima gambar dari ESP32
 Route::post('/camera/upload', function (Request $request) {
