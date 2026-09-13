@@ -75,17 +75,14 @@ class AutoSortController extends Controller
 
             if ($response->successful()) {
                 $resultData = $response->json();
-                $aiText = trim(strtoupper($resultData['candidates'][0]['content']['parts'][0]['text'] ?? 'TIDAK_DIKETAHUI'));
+                $aiText = strtoupper($resultData['candidates'][0]['content']['parts'][0]['text'] ?? 'TIDAK_DIKETAHUI');
                 
-                // Hapus tanda kutip atau titik jika Gemini bandel
-                $aiText = preg_replace('/[^A-Z_]/', '', $aiText);
-                
-                // Menerjemahkan jawaban Gemini ke pergerakan Servo
+                // Menerjemahkan jawaban Gemini ke pergerakan Servo dengan pencarian kata kunci cerdas
                 $result = $this->executeServoMovement($aiText);
 
                 return response()->json([
                     'status' => 'success',
-                    'detection' => $aiText,
+                    'detection' => $result['category'], // Gunakan kategori bersih, bukan teks mentah AI
                     'action' => $result['message'],
                     'servo1' => $result['servo1'],
                     'servo2' => $result['servo2']
@@ -110,49 +107,50 @@ class AutoSortController extends Controller
     }
 
     /**
-     * Gerakkan servo berdasarkan jenis sampah yang terdeteksi.
+     * Gerakkan servo berdasarkan jenis sampah yang terdeteksi secara pintar.
      */
-    private function executeServoMovement($type)
+    private function executeServoMovement($text)
     {
         $servo1Angle = 90; // Default Netral
         $servo2Angle = 90; // Default Netral
         $message = "Sistem standby menunggu objek yang jelas.";
+        $detectedCategory = 'TIDAK_DIKETAHUI';
 
-        switch ($type) {
-            case 'KERTAS':
-                $servo1Angle = 90;
-                $servo2Angle = 50;
-                $message = "Memilah KERTAS ke depan.";
-                break;
-            case 'PLASTIK':
-                $servo1Angle = 180;
-                $servo2Angle = 50;
-                $message = "Memilah PLASTIK ke kiri.";
-                break;
-            case 'ORGANIK':
-                $servo1Angle = 0;
-                $servo2Angle = 50;
-                $message = "Memilah ORGANIK ke kanan.";
-                break;
-            case 'LOGAM':
-                $servo1Angle = 90;
-                $servo2Angle = 180;
-                $message = "Memilah LOGAM ke belakang.";
-                break;
-            default:
-                // Jika TIDAK_DIKETAHUI, biarkan netral
-                $type = 'TIDAK_DIKETAHUI';
-                break;
+        // Deteksi Cerdas (Mengenali berbagai macam kata)
+        if (str_contains($text, 'KERTAS') || str_contains($text, 'PAPER') || str_contains($text, 'KARDUS')) {
+            $detectedCategory = 'KERTAS';
+            $servo1Angle = 90;
+            $servo2Angle = 50;
+            $message = "Memilah KERTAS ke depan.";
+        } 
+        elseif (str_contains($text, 'PLASTIK') || str_contains($text, 'PLASTIC') || str_contains($text, 'BOTOL') || str_contains($text, 'PL')) {
+            $detectedCategory = 'PLASTIK';
+            $servo1Angle = 180;
+            $servo2Angle = 50;
+            $message = "Memilah PLASTIK ke kiri.";
+        } 
+        elseif (str_contains($text, 'ORGANIK') || str_contains($text, 'ORGANIC') || str_contains($text, 'DAUN') || str_contains($text, 'MAKANAN')) {
+            $detectedCategory = 'ORGANIK';
+            $servo1Angle = 0;
+            $servo2Angle = 50;
+            $message = "Memilah ORGANIK ke kanan.";
+        } 
+        elseif (str_contains($text, 'LOGAM') || str_contains($text, 'METAL') || str_contains($text, 'KALENG') || str_contains($text, 'Besi')) {
+            $detectedCategory = 'LOGAM';
+            $servo1Angle = 90;
+            $servo2Angle = 180;
+            $message = "Memilah LOGAM ke belakang.";
         }
 
         // Jika terdeteksi objek nyata, eksekusi servo
-        if ($type !== 'TIDAK_DIKETAHUI') {
+        if ($detectedCategory !== 'TIDAK_DIKETAHUI') {
             $this->saveServoAngle(1, $servo1Angle);
             $this->saveServoAngle(2, $servo2Angle);
         }
 
         return [
             'message' => $message,
+            'category' => $detectedCategory,
             'servo1' => $servo1Angle,
             'servo2' => $servo2Angle
         ];
