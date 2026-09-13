@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-8 bg-slate-50 min-h-screen" x-data="autoSortController()">
+    <div id="auto-sort-container" class="py-8 bg-slate-50 min-h-screen" x-data="autoSortController()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             
             <!-- Notifikasi Error/Success -->
@@ -128,12 +128,79 @@
         }
     </style>
 
-    <!-- Script Video Player Canvas -->
+    <!-- Script Video Player & Motion Detection -->
     <script>
+        // Variabel global untuk deteksi gerakan
+        let lastMotionData = null;
+        let motionState = 'IDLE'; // IDLE -> MOVING -> STABILIZING -> SCANNED
+        let stabilizeTimer = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('camera-canvas');
             const ctx = canvas.getContext('2d');
             
+            // Canvas tersembunyi berukuran kecil untuk memproses gerakan agar tidak berat
+            const motionCanvas = document.createElement('canvas');
+            motionCanvas.width = 64;
+            motionCanvas.height = 48;
+            const motionCtx = motionCanvas.getContext('2d', { willReadFrequently: true });
+
+            function checkMotion() {
+                // Ambil state dari komponen Alpine.js
+                const alpineData = document.getElementById('auto-sort-container').__x.$data;
+                
+                // Jangan periksa gerakan jika Auto Pilot mati atau sedang proses scan
+                if (!alpineData.isAutoPilot || alpineData.isScanning) {
+                    motionState = 'IDLE';
+                    return;
+                }
+
+                // Lukis gambar dari kanvas utama ke kanvas kecil
+                motionCtx.drawImage(canvas, 0, 0, motionCanvas.width, motionCanvas.height);
+                const currentData = motionCtx.getImageData(0, 0, motionCanvas.width, motionCanvas.height).data;
+
+                if (lastMotionData) {
+                    let diffCount = 0;
+                    // Bandingkan pixel frame saat ini dengan frame sebelumnya
+                    for (let i = 0; i < currentData.length; i += 4) {
+                        const rDiff = Math.abs(currentData[i] - lastMotionData[i]);
+                        const gDiff = Math.abs(currentData[i+1] - lastMotionData[i+1]);
+                        const bDiff = Math.abs(currentData[i+2] - lastMotionData[i+2]);
+                        
+                        // Jika warna berubah lebih dari ambang batas (cahaya/bayangan/objek)
+                        if (rDiff + gDiff + bDiff > 60) diffCount++;
+                    }
+
+                    const changePercentage = (diffCount / (motionCanvas.width * motionCanvas.height)) * 100;
+
+                    if (changePercentage > 3) { 
+                        // Jika lebih dari 3% layar berubah = Ada objek masuk/bergerak
+                        if (motionState === 'IDLE' || motionState === 'STABILIZING') {
+                            motionState = 'MOVING';
+                            clearTimeout(stabilizeTimer);
+                            alpineData.lastAction = "Terdeteksi pergerakan objek...";
+                        }
+                    } else {
+                        // Jika layar tidak berubah (objek sudah diletakkan dan diam)
+                        if (motionState === 'MOVING') {
+                            motionState = 'STABILIZING';
+                            alpineData.lastAction = "Membidik objek (Tahan 1 detik)...";
+                            
+                            // Tunggu 1 detik agar objek benar-benar diam, lalu jepret!
+                            stabilizeTimer = setTimeout(() => {
+                                if (motionState === 'STABILIZING') {
+                                    motionState = 'IDLE';
+                                    alpineData.scanNow();
+                                }
+                            }, 1000); 
+                        }
+                    }
+                }
+                
+                // Simpan frame saat ini sebagai acuan untuk frame berikutnya
+                lastMotionData = new Uint8ClampedArray(currentData);
+            }
+
             function fetchNextFrame() {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
@@ -141,7 +208,11 @@
                 
                 img.onload = () => {
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    setTimeout(fetchNextFrame, 100); // 10 FPS
+                    
+                    // Cek pergerakan setiap kali frame baru tiba
+                    checkMotion();
+                    
+                    setTimeout(fetchNextFrame, 100); 
                 };
                 
                 img.onerror = () => {
@@ -156,7 +227,6 @@
             return {
                 isScanning: false,
                 isAutoPilot: false,
-                autoPilotInterval: null,
                 lastDetection: '',
                 lastAction: '',
                 logs: [],
@@ -170,22 +240,18 @@
                 toggleAutoPilot() {
                     this.isAutoPilot = !this.isAutoPilot;
                     if (this.isAutoPilot) {
-                        this.showAlert('success', 'Mode Auto-Pilot Diaktifkan. Memindai setiap 5 detik.');
-                        // Langsung scan 1x
-                        this.scanNow();
-                        // Lalu jalankan interval 5 detik
-                        this.autoPilotInterval = setInterval(() => {
-                            if(!this.isScanning) this.scanNow();
-                        }, 5000);
+                        this.showAlert('success', 'Mode Auto-Pilot Diaktifkan. Sistem menunggu objek diletakkan.');
+                        this.lastAction = "Menunggu objek masuk kamera...";
                     } else {
-                        clearInterval(this.autoPilotInterval);
                         this.showAlert('success', 'Mode Auto-Pilot Dinonaktifkan.');
+                        this.lastAction = "Auto-Pilot mati.";
                     }
                 },
 
                 async scanNow() {
                     if (this.isScanning) return;
                     this.isScanning = true;
+                    this.lastAction = "Memproses gambar dengan AI...";
                     
                     try {
                         const response = await fetch('/api/ai/scan', {
@@ -213,6 +279,12 @@
                             // Simpan max 20 log
                             if(this.logs.length > 20) this.logs.pop();
                             
+                            // Beri jeda 3 detik setelah membuang sampah, sebelum bisa memindai objek baru
+                            if (this.isAutoPilot) {
+                                setTimeout(() => {
+                                    if (this.isAutoPilot) this.lastAction = "Menunggu objek masuk kamera...";
+                                }, 3000);
+                            }
                         } else {
                             this.showAlert('error', data.message || 'Terjadi kesalahan sistem.');
                             if (this.isAutoPilot) this.toggleAutoPilot(); // Matikan auto jika error (misal API key habis)
