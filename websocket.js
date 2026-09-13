@@ -1,12 +1,17 @@
 const WebSocket = require('ws');
 
-// Jalankan WebSocket server di port 8880
-const wss = new WebSocket.Server({ port: 8880 }, () => {
+// Nonaktifkan perMessageDeflate untuk mencegah error RSV dari ESP32
+const wss = new WebSocket.Server({ port: 8880, perMessageDeflate: false }, () => {
     console.log('WebSocket Video Relay Server berjalan di port 8880');
 });
 
 wss.on('connection', (ws, req) => {
     console.log(`[+] Client Terhubung: ${req.socket.remoteAddress}`);
+
+    // Tambahkan penangkap error agar server tidak mati (crash) jika ada frame rusak
+    ws.on('error', (err) => {
+        console.error('[-] Error dari client:', err.message);
+    });
 
     ws.on('message', (message) => {
         // Jika data yang diterima berbentuk Buffer (Binary Gambar dari ESP32)

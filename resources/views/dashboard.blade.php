@@ -47,67 +47,28 @@
         </div>
     </div>
 
-    <!-- Vanilla JS Component for WebSocket -->
+    <!-- Vanilla JS Component for Polling -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const serverUrl = 'ws://72.61.143.123:8880';
-            
             const statusBadge = document.getElementById('connection-status');
             const warningBox = document.getElementById('mixed-content-warning');
             const cameraImg = document.getElementById('camera-stream-img');
             const waitingText = document.getElementById('waiting-text');
             
-            let ws = null;
-            let currentFrameUrl = null;
+            // Set status jadi Connected karena ini pakai HTTP biasa
+            statusBadge.textContent = 'API Polling Active';
+            statusBadge.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-blue-100 text-blue-800';
+            waitingText.style.display = 'none';
+            warningBox.style.display = 'none';
+            
+            // Tampilkan gambar
+            cameraImg.style.display = 'block';
 
-            function updateStatus(connected) {
-                if (connected) {
-                    statusBadge.textContent = 'Connected';
-                    statusBadge.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-green-100 text-green-800';
-                    waitingText.style.display = 'none';
-                    warningBox.style.display = 'none';
-                } else {
-                    statusBadge.textContent = 'Disconnected';
-                    statusBadge.className = 'inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium bg-red-100 text-red-800';
-                    waitingText.style.display = 'block';
-                    cameraImg.style.display = 'none';
-                }
-            }
-
-            function connectWebSocket() {
-                ws = new WebSocket(serverUrl);
-                ws.binaryType = 'blob';
-
-                ws.onopen = () => {
-                    console.log('Connected to WebSocket Relay Server');
-                    updateStatus(true);
-                };
-
-                ws.onmessage = (event) => {
-                    if (event.data instanceof Blob) {
-                        if (currentFrameUrl) {
-                            URL.revokeObjectURL(currentFrameUrl);
-                        }
-                        currentFrameUrl = URL.createObjectURL(event.data);
-                        cameraImg.src = currentFrameUrl;
-                        cameraImg.style.display = 'block';
-                    }
-                };
-
-                ws.onclose = () => {
-                    console.log('Disconnected from server. Retrying in 3 seconds...');
-                    updateStatus(false);
-                    setTimeout(connectWebSocket, 3000);
-                };
-                
-                ws.onerror = (err) => {
-                    console.error('WebSocket Error:', err);
-                    ws.close();
-                    warningBox.style.display = 'block';
-                };
-            }
-
-            connectWebSocket();
+            // Memaksa browser merefresh gambar tiap 150 milidetik
+            setInterval(() => {
+                // Tambahkan timestamp di belakang URL agar browser tidak pakai cache
+                cameraImg.src = '/camera.jpg?time=' + new Date().getTime();
+            }, 150);
         });
     </script>
 </x-app-layout>

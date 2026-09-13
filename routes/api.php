@@ -2,11 +2,23 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Api\ServoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+// ROUTE PALING MUDAH UNTUK ESP32 CAMERA
+Route::post('/upload-frame', function (Request $request) {
+    // Menerima raw binary image dari ESP32 dan menyimpannya langsung ke folder public
+    $imageBytes = $request->getContent();
+    if (!empty($imageBytes)) {
+        File::put(public_path('camera.jpg'), $imageBytes);
+        return response()->json(['status' => 'ok']);
+    }
+    return response()->json(['status' => 'error'], 400);
+});
 
 Route::get('/servos/status', [ServoController::class, 'status']);
 Route::post('/servos/wifi', [ServoController::class, 'updateWifi']);
