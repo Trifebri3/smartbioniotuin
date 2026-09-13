@@ -40,4 +40,7 @@ Route::post('/camera/upload', function (Request $request) {
     }
     return response()->json(['status' => 'success']);
 });
+
+// Endpoint untuk menjalankan AI Scan (Gemini Vision)
+Route::post('/ai/scan', [\App\Http\Controllers\Api\AutoSortController::class, 'scan']);
 Route::post('/wifi/config', [ServoController::class, 'updateWifi']);

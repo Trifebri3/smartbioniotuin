@@ -11,6 +11,8 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/auto-sort', [\App\Http\Controllers\Api\AutoSortController::class, 'index'])->name('auto.sort');
+
 use App\Http\Controllers\ServoController;
 
 Route::middleware('auth')->group(function () {
