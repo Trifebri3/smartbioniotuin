@@ -92,10 +92,11 @@ class AutoSortController extends Controller
                 ]);
 
             } else {
-                Log::error('Gemini API Error: ' . $response->body());
+                $errorBody = $response->body();
+                Log::error('Gemini API Error: ' . $errorBody);
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Gagal terhubung ke AI. Silakan periksa limit atau API Key Anda.'
+                    'message' => 'API Error: ' . $errorBody
                 ], 500);
             }
 
