@@ -11,7 +11,7 @@ Route::get('/user', function (Request $request) {
 
 // ROUTE PALING MUDAH UNTUK ESP32 CAMERA
 Route::post('/upload-frame', function (Request $request) {
-    // Menerima raw binary image dari ESP32 dan menyimpannya langsung ke folder public
+    // Menerima raw binary image dari ESP32
     $imageBytes = $request->getContent();
     if (!empty($imageBytes)) {
         File::put(public_path('camera.jpg'), $imageBytes);

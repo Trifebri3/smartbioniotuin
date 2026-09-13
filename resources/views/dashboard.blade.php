@@ -64,11 +64,11 @@
             // Tampilkan gambar
             cameraImg.style.display = 'block';
 
-            // Memaksa browser merefresh gambar tiap 150 milidetik
+            // Memaksa browser merefresh gambar sangat cepat (tiap 50 ms)
             setInterval(() => {
                 // Tambahkan timestamp di belakang URL agar browser tidak pakai cache
                 cameraImg.src = '/camera.jpg?time=' + new Date().getTime();
-            }, 150);
+            }, 50);
         });
     </script>
 </x-app-layout>
