@@ -48,8 +48,8 @@
                 ws: null,
                 
                 initWebSocket() {
-                    // GANTI ws://bin.ihi.my.id:8080 menjadi wss:// jika menggunakan HTTPS+SSL proxy
-                    const serverUrl = 'ws://bin.ihi.my.id:8080';
+                    // Menggunakan WSS (Secure) karena web Anda menggunakan HTTPS
+                    const serverUrl = 'wss://bin.ihi.my.id:8880';
                     
                     this.ws = new WebSocket(serverUrl);
                     this.ws.binaryType = 'blob';
