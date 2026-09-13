@@ -27,6 +27,15 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Live Camera Stream</h3>
+                    
+                    <div id="mixed-content-warning" class="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700" style="display: none;">
+                        <p class="font-bold">⚠️ Izin Keamanan Diperlukan!</p>
+                        <p class="text-sm mt-1">
+                            Browser Anda memblokir koneksi ke kamera karena menggunakan IP langsung (`ws://`). 
+                            Untuk melihat kamera, klik ikon <strong>Gembok/Tanda Seru</strong> di sebelah URL alamat web (kiri atas), pilih <strong>Site Settings (Setelan Situs)</strong>, lalu ubah <strong>Insecure Content (Konten Tidak Aman)</strong> menjadi <strong>Allow (Izinkan)</strong>. Setelah itu <em>Refresh</em> halaman ini.
+                        </p>
+                    </div>
+
                     <div class="relative w-full rounded-lg bg-gray-900 flex items-center justify-center overflow-hidden" style="min-height: 480px;">
                         <img x-show="frameUrl" :src="frameUrl" alt="Live ESP32 Camera Stream" class="w-full max-w-3xl object-contain rounded" style="display: none;"/>
                         
@@ -48,8 +57,8 @@
                 ws: null,
                 
                 initWebSocket() {
-                    // Menggunakan WSS (Secure) karena web Anda menggunakan HTTPS
-                    const serverUrl = 'wss://bin.ihi.my.id:8880';
+                    // MENGGUNAKAN IP LANGSUNG UNTUK BYPASS CLOUDFLARE DI BROWSER
+                    const serverUrl = 'ws://72.61.143.123:8880';
                     
                     this.ws = new WebSocket(serverUrl);
                     this.ws.binaryType = 'blob';
@@ -57,6 +66,7 @@
                     this.ws.onopen = () => {
                         console.log('Connected to WebSocket Relay Server');
                         this.connected = true;
+                        document.getElementById('mixed-content-warning').style.display = 'none';
                     };
 
                     this.ws.onmessage = (event) => {
@@ -78,6 +88,7 @@
                     this.ws.onerror = (err) => {
                         console.error('WebSocket Error:', err);
                         this.ws.close();
+                        document.getElementById('mixed-content-warning').style.display = 'block';
                     };
                 }
             }))
