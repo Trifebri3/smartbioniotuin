@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Servo;
+use App\Models\DetectionLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class AutoSortController extends Controller
 {
@@ -79,6 +81,24 @@ class AutoSortController extends Controller
                 
                 // Menerjemahkan jawaban Gemini ke pergerakan Servo dengan pencarian kata kunci cerdas
                 $result = $this->executeServoMovement($aiText);
+
+                // Simpan gambar dan log jika terdeteksi sampah
+                if ($result['category'] !== 'TIDAK_DIKETAHUI') {
+                    $timestamp = now()->format('Y-m-d_H-i-s');
+                    $newFileName = "detections/{$timestamp}.jpg";
+                    
+                    // Buat folder detections jika belum ada
+                    if (!File::exists(public_path('detections'))) {
+                        File::makeDirectory(public_path('detections'), 0755, true);
+                    }
+                    
+                    File::copy($imagePath, public_path($newFileName));
+                    
+                    DetectionLog::create([
+                        'category' => $result['category'],
+                        'image_path' => $newFileName,
+                    ]);
+                }
 
                 return response()->json([
                     'status' => 'success',

@@ -51,6 +51,99 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Sensor Data -->
+            <div class="border border-gray-100 rounded-2xl p-5 md:p-6 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <div class="mb-6 border-b border-gray-100 pb-4 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Status Tempat Sampah
+                    </h3>
+                    <span id="sensor-last-update" class="text-xs text-gray-400 font-medium bg-gray-50 px-2 py-1 rounded-md border border-gray-100">Loading...</span>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Sensor 1 -->
+                    <div class="relative overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-4 transition-all hover:bg-slate-100 group shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-sm font-semibold text-slate-600">Bin 1</span>
+                            <span id="s1-status" class="flex h-2.5 w-2.5 rounded-full bg-slate-300"></span>
+                        </div>
+                        <div class="mt-4 flex items-end justify-between">
+                            <div>
+                                <span id="s1-val" class="text-3xl font-bold text-slate-800 tracking-tight">--</span>
+                                <span class="text-sm font-medium text-slate-500 ml-1">cm</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="s1-pct" class="text-sm font-bold text-blue-600">--%</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 mt-3 overflow-hidden shadow-inner">
+                            <div id="s1-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sensor 2 -->
+                    <div class="relative overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-4 transition-all hover:bg-slate-100 group shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-sm font-semibold text-slate-600">Bin 2</span>
+                            <span id="s2-status" class="flex h-2.5 w-2.5 rounded-full bg-slate-300"></span>
+                        </div>
+                        <div class="mt-4 flex items-end justify-between">
+                            <div>
+                                <span id="s2-val" class="text-3xl font-bold text-slate-800 tracking-tight">--</span>
+                                <span class="text-sm font-medium text-slate-500 ml-1">cm</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="s2-pct" class="text-sm font-bold text-blue-600">--%</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 mt-3 overflow-hidden shadow-inner">
+                            <div id="s2-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sensor 3 -->
+                    <div class="relative overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-4 transition-all hover:bg-slate-100 group shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-sm font-semibold text-slate-600">Bin 3</span>
+                            <span id="s3-status" class="flex h-2.5 w-2.5 rounded-full bg-slate-300"></span>
+                        </div>
+                        <div class="mt-4 flex items-end justify-between">
+                            <div>
+                                <span id="s3-val" class="text-3xl font-bold text-slate-800 tracking-tight">--</span>
+                                <span class="text-sm font-medium text-slate-500 ml-1">cm</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="s3-pct" class="text-sm font-bold text-blue-600">--%</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 mt-3 overflow-hidden shadow-inner">
+                            <div id="s3-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Sensor 4 -->
+                    <div class="relative overflow-hidden rounded-xl bg-slate-50 border border-slate-100 p-4 transition-all hover:bg-slate-100 group shadow-sm">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-sm font-semibold text-slate-600">Bin 4</span>
+                            <span id="s4-status" class="flex h-2.5 w-2.5 rounded-full bg-slate-300"></span>
+                        </div>
+                        <div class="mt-4 flex items-end justify-between">
+                            <div>
+                                <span id="s4-val" class="text-3xl font-bold text-slate-800 tracking-tight">--</span>
+                                <span class="text-sm font-medium text-slate-500 ml-1">cm</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="s4-pct" class="text-sm font-bold text-blue-600">--%</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 mt-3 overflow-hidden shadow-inner">
+                            <div id="s4-bar" class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -94,6 +187,94 @@
 
             // Nyalakan Mesin Video!
             fetchNextFrame();
+        });
+    </script>
+
+    <!-- Sensor Polling Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const MAX_DISTANCE = 40; // cm (kosong)
+            const MIN_DISTANCE = 5;  // cm (penuh)
+
+            function updateSensorUI(id, distance) {
+                const valEl = document.getElementById(`s${id}-val`);
+                const pctEl = document.getElementById(`s${id}-pct`);
+                const barEl = document.getElementById(`s${id}-bar`);
+                const statusEl = document.getElementById(`s${id}-status`);
+
+                if (distance === -1 || distance === null || distance === undefined) {
+                    valEl.textContent = '--';
+                    pctEl.textContent = 'Off';
+                    barEl.style.width = '0%';
+                    barEl.className = 'bg-slate-300 h-2.5 rounded-full transition-all duration-500';
+                    statusEl.className = 'flex h-2.5 w-2.5 rounded-full bg-slate-300';
+                    return;
+                }
+
+                // Format jarak
+                valEl.textContent = parseFloat(distance).toFixed(1);
+
+                // Hitung persentase kepenuhan (semakin dekat, semakin penuh)
+                let pct = 0;
+                if (distance <= MIN_DISTANCE) {
+                    pct = 100;
+                } else if (distance >= MAX_DISTANCE) {
+                    pct = 0;
+                } else {
+                    pct = 100 - ((distance - MIN_DISTANCE) / (MAX_DISTANCE - MIN_DISTANCE) * 100);
+                }
+                
+                pct = Math.round(pct);
+                pctEl.textContent = `${pct}%`;
+                barEl.style.width = `${pct}%`;
+
+                // Tentukan warna berdasarkan persentase
+                let colorClass = 'bg-blue-500';
+                let dotClass = 'bg-blue-500';
+                let textClass = 'text-blue-600';
+                
+                if (pct > 85) {
+                    colorClass = 'bg-rose-500';
+                    dotClass = 'bg-rose-500 animate-pulse';
+                    textClass = 'text-rose-600';
+                } else if (pct > 60) {
+                    colorClass = 'bg-amber-500';
+                    dotClass = 'bg-amber-500';
+                    textClass = 'text-amber-600';
+                } else {
+                    colorClass = 'bg-emerald-500';
+                    dotClass = 'bg-emerald-500';
+                    textClass = 'text-emerald-600';
+                }
+
+                barEl.className = `${colorClass} h-2.5 rounded-full transition-all duration-500 shadow-sm`;
+                statusEl.className = `flex h-2.5 w-2.5 rounded-full ${dotClass} shadow-sm`;
+                pctEl.className = `text-sm font-bold ${textClass}`;
+            }
+
+            function fetchSensors() {
+                fetch('/api/sensors/latest')
+                    .then(response => response.json())
+                    .then(data => {
+                        updateSensorUI(1, data.sensor1);
+                        updateSensorUI(2, data.sensor2);
+                        updateSensorUI(3, data.sensor3);
+                        updateSensorUI(4, data.sensor4);
+                        
+                        const now = new Date();
+                        document.getElementById('sensor-last-update').textContent = 
+                            `Diperbarui: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching sensor data:', error);
+                        document.getElementById('sensor-last-update').textContent = 'Koneksi Terputus';
+                        document.getElementById('sensor-last-update').classList.add('text-rose-500', 'bg-rose-50');
+                    });
+            }
+
+            // Polling setiap 2 detik
+            setInterval(fetchSensors, 2000);
+            fetchSensors(); // Fetch pertama kali
         });
     </script>
 </x-app-layout>

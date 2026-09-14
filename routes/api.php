@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Api\ServoController;
+use App\Models\SensorLog;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -44,3 +46,41 @@ Route::post('/camera/upload', function (Request $request) {
 // Endpoint untuk menjalankan AI Scan (Gemini Vision)
 Route::post('/ai/scan', [\App\Http\Controllers\Api\AutoSortController::class, 'scan']);
 Route::post('/wifi/config', [ServoController::class, 'updateWifi']);
+
+// Endpoint untuk update data sensor dari ESP32
+Route::post('/sensors/update', function (Request $request) {
+    $data = $request->validate([
+        'sensor1' => 'nullable|numeric',
+        'sensor2' => 'nullable|numeric',
+        'sensor3' => 'nullable|numeric',
+        'sensor4' => 'nullable|numeric',
+    ]);
+    
+    // Simpan data di Cache selama 10 menit untuk realtime dashboard
+    Cache::put('sensor_data', $data, now()->addMinutes(10));
+    
+    // Logika Simpan Riwayat ke DB (Maksimal per 10 menit)
+    $lastLog = SensorLog::latest()->first();
+    if (!$lastLog || $lastLog->created_at->diffInMinutes(now()) >= 10) {
+        SensorLog::create([
+            'sensor1' => $data['sensor1'] ?? null,
+            'sensor2' => $data['sensor2'] ?? null,
+            'sensor3' => $data['sensor3'] ?? null,
+            'sensor4' => $data['sensor4'] ?? null,
+        ]);
+    }
+    
+    return response()->json(['status' => 'success', 'message' => 'Data saved']);
+});
+
+// Endpoint untuk mengambil data sensor terbaru
+Route::get('/sensors/latest', function () {
+    $data = Cache::get('sensor_data', [
+        'sensor1' => -1,
+        'sensor2' => -1,
+        'sensor3' => -1,
+        'sensor4' => -1,
+    ]);
+    
+    return response()->json($data);
+});
