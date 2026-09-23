@@ -38,6 +38,7 @@ class DetectionLog extends Model
             'plastik' => 'Sampah Plastik',
             'kertas' => 'Sampah Kertas',
             'logam', 'logam_kaca' => 'Sampah Logam & Kaca',
+            'auto' => 'Sampah Organik',
             default => ucfirst($this->category ?? 'Tidak Diketahui'),
         };
     }

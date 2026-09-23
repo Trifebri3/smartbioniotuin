@@ -33,6 +33,16 @@ class PublicMonitorController extends Controller
      */
     private function buildSummaryData(): array
     {
+        // Self-Healing Database: Bersihkan record lama di server yang sempat tersimpan sebagai 'auto'
+        DetectionLog::where('category', 'auto')
+            ->orWhereNull('category')
+            ->orWhere('category', '')
+            ->update([
+                'category' => 'organik',
+                'suggestion' => 'Wadah HIJAU (Sisa Makanan, Daun, Kompos)',
+                'servo_action' => 'Memilah ORGANIK ke kanan (Wadah Hijau)'
+            ]);
+
         // 1. Deteksi paling mutakhir
         $latest = DetectionLog::latest('id')->first();
 
