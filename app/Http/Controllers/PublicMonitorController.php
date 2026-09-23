@@ -77,10 +77,21 @@ class PublicMonitorController extends Controller
         // 5. Data Servos
         $servos = Servo::orderBy('id')->get()->keyBy('id');
 
+        // 6. Cek Keaktifan Stream Kamera
+        $cameraFile = public_path('camera.jpg');
+        $cameraMtime = file_exists($cameraFile) ? filemtime($cameraFile) : 0;
+        $cameraAge = time() - $cameraMtime;
+        $isCameraStreaming = $cameraAge <= 6;
+
         return [
             'latest' => $latest,
             'recentCaptures' => $recentCaptures,
             'bins' => $bins,
+            'camera' => [
+                'is_streaming' => $isCameraStreaming,
+                'age_seconds' => $cameraAge,
+                'label' => $isCameraStreaming ? 'Live Stream Aktif' : 'Stream Standby (Tidak Ada Perangkat Streaming)',
+            ],
             'servos' => [
                 'servo1' => $servos->get(1)->current_angle ?? 90,
                 'servo2' => $servos->get(2)->current_angle ?? 90,

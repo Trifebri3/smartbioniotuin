@@ -145,7 +145,23 @@
                 <!-- Keterangan Cara Kerja Kamera -->
                 <div class="pt-2 text-xs text-slate-500 flex items-center justify-between border-t border-slate-100">
                     <span>Sumber Stream: <strong id="stream-source-name" class="text-slate-800">Python infer_webcam.py / ESP32</strong></span>
-                    <span class="text-slate-400">Sinkron otomatis</span>
+                    <span id="stream-sync-badge" class="text-slate-400">Sinkron otomatis</span>
+                </div>
+
+                <!-- Banner Informatif jika Stream Python Belum Dijalankan -->
+                <div id="stream-inactive-banner" class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-start gap-2.5">
+                    <svg class="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div class="leading-relaxed">
+                        <strong class="font-bold text-amber-950">Ingin Mengalirkan Live Webcam Komputer?</strong>
+                        <p class="mt-0.5 text-amber-900">
+                            Gambar di atas saat ini adalah *frame* terakhir karena script AI belum dinyalakan di terminal.
+                        </p>
+                        <div class="mt-2 space-y-1">
+                            <p><strong>Opsi 1 (Webcam Python):</strong> Buka terminal Anda dan ketik:</p>
+                            <code class="block bg-amber-100/80 p-1.5 rounded font-mono font-bold text-amber-950 border border-amber-300/50">py infer_webcam.py --server http://127.0.0.1:8000</code>
+                            <p class="pt-1"><strong>Opsi 2 (Langsung di Browser):</strong> Cukup klik tab <button onclick="setFeedMode('browser')" class="font-bold underline text-blue-700 hover:text-blue-900 cursor-pointer">"Kamera Laptop/HP"</button> di bagian atas untuk langsung menyalakan webcam dari browser ini tanpa membuka terminal.</p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -587,6 +603,34 @@
                 const res = await fetch('/api/public/summary');
                 if (!res.ok) return;
                 const data = await res.json();
+
+                // Update Status Keaktifan Stream Kamera
+                const streamBanner = document.getElementById('stream-inactive-banner');
+                const liveDot = document.getElementById('live-dot');
+                const modeLabel = document.getElementById('camera-mode-label');
+                const syncBadge = document.getElementById('stream-sync-badge');
+
+                if (feedMode === 'live') {
+                    if (data.camera && data.camera.is_streaming) {
+                        if (streamBanner) streamBanner.classList.add('hidden');
+                        if (liveDot) liveDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+                        if (modeLabel) modeLabel.textContent = 'LIVE STREAM AKTIF';
+                        if (syncBadge) {
+                            syncBadge.textContent = 'Stream Terhubung (Real-Time)';
+                            syncBadge.className = 'text-emerald-600 font-semibold text-xs';
+                        }
+                    } else {
+                        if (streamBanner) streamBanner.classList.remove('hidden');
+                        if (liveDot) liveDot.className = 'w-2 h-2 rounded-full bg-amber-500';
+                        if (modeLabel) modeLabel.textContent = 'FRAME TERAKHIR (STANDBY)';
+                        if (syncBadge) {
+                            syncBadge.textContent = 'Menunggu Stream Python/ESP32';
+                            syncBadge.className = 'text-amber-600 font-medium text-xs';
+                        }
+                    }
+                } else if (streamBanner) {
+                    streamBanner.classList.add('hidden');
+                }
 
                 // 1. Update Deteksi Terakhir
                 if (data.latest) {
