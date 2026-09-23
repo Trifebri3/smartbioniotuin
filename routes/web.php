@@ -3,9 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+use App\Http\Controllers\PublicMonitorController;
+
+// Layar Tampilan Publik SmartBin (bin.ihi.my.id)
+Route::get('/', [PublicMonitorController::class, 'index'])->name('home');
+Route::get('/monitor', [PublicMonitorController::class, 'index'])->name('public.monitor');
 
 Route::get('/dashboard', function () {
     return view('dashboard');

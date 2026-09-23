@@ -84,3 +84,11 @@ Route::get('/sensors/latest', function () {
     
     return response()->json($data);
 });
+
+// Endpoint untuk upload hasil capture otomatis dari Python / ESP32
+Route::post('/captures/upload', [\App\Http\Controllers\Api\CaptureApiController::class, 'upload']);
+Route::get('/captures/recent', [\App\Http\Controllers\Api\CaptureApiController::class, 'recent']);
+
+// Endpoint untuk layar publik real-time update
+Route::get('/public/summary', [\App\Http\Controllers\PublicMonitorController::class, 'getSummary']);
+
