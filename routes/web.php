@@ -8,6 +8,7 @@ use App\Http\Controllers\PublicMonitorController;
 // Layar Tampilan Publik SmartBin (bin.ihi.my.id)
 Route::get('/', [PublicMonitorController::class, 'index'])->name('home');
 Route::get('/monitor', [PublicMonitorController::class, 'index'])->name('public.monitor');
+Route::get('/public-monitor', [PublicMonitorController::class, 'index'])->name('public.monitor.alias');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
