@@ -59,6 +59,19 @@ Route::post('/sensors/update', function (Request $request) {
     // Simpan data di Cache selama 10 menit untuk realtime dashboard
     Cache::put('sensor_data', $data, now()->addMinutes(10));
     
+    // Cek Peringatan Kapasitas Penuh (>= 90%) -> Kirim WhatsApp & Email Otomatis
+    $sensorCategoryMap = [
+        'sensor1' => 'Organik',
+        'sensor2' => 'Plastik',
+        'sensor3' => 'Kertas',
+        'sensor4' => 'Logam & Kaca',
+    ];
+    foreach ($sensorCategoryMap as $key => $categoryName) {
+        if (isset($data[$key]) && (float)$data[$key] >= 90.0) {
+            \App\Services\NotificationService::notifyBinFull('SmartBin Kampus', $categoryName, (float)$data[$key]);
+        }
+    }
+
     // Logika Simpan Riwayat ke DB (Maksimal per 10 menit)
     $lastLog = SensorLog::latest()->first();
     if (!$lastLog || $lastLog->created_at->diffInMinutes(now()) >= 10) {

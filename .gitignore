@@ -21,6 +21,10 @@
 /storage/*.key
 /storage/pail
 /vendor
+/public/detections/*
+!/public/detections/.gitkeep
+/public/deposits/*
+!/public/deposits/.gitkeep
 _ide_helper.php
 Homestead.json
 Homestead.yaml

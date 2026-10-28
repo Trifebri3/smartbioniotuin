@@ -11,18 +11,27 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-6 sm:-my-px sm:ms-8 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard Manual') }}
+                        {{ __('Dashboard') }}
                     </x-nav-link>
                     <x-nav-link :href="route('auto.sort')" :active="request()->routeIs('auto.sort')">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span class="flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                             {{ __('Auto-Sort (AI)') }}
                         </span>
                     </x-nav-link>
                     <x-nav-link :href="route('servos.index')" :active="request()->routeIs('servos.*')">
                         {{ __('Kontrol Servo') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('public.locations')" :active="request()->routeIs('public.locations')">
+                        {{ __('📍 Peta Lokasi') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('user.ai.scanner')" :active="request()->routeIs('user.ai.scanner')">
+                        {{ __('📷 Scan AI') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('public.leaderboard')" :active="request()->routeIs('public.leaderboard')">
+                        {{ __('🏆 Leaderboard') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -43,6 +52,10 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('user.my.deposits')">
+                            {{ __('Riwayat Setor & Poin') }}
+                        </x-dropdown-link>
+
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
@@ -79,8 +92,20 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('auto.sort')" :active="request()->routeIs('auto.sort')">
+                {{ __('Auto-Sort (AI)') }}
+            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('servos.index')" :active="request()->routeIs('servos.*')">
                 {{ __('Kontrol Servo') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('public.locations')" :active="request()->routeIs('public.locations')">
+                {{ __('📍 Peta Lokasi') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('user.ai.scanner')" :active="request()->routeIs('user.ai.scanner')">
+                {{ __('📷 Scan AI') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('public.leaderboard')" :active="request()->routeIs('public.leaderboard')">
+                {{ __('🏆 Leaderboard') }}
             </x-responsive-nav-link>
         </div>
 
