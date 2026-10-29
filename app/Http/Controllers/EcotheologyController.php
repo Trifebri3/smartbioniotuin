@@ -113,3 +113,4 @@ class EcotheologyController extends Controller
         return response()->json($fallback);
     }
 }
+

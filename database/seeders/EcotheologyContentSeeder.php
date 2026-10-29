@@ -89,3 +89,4 @@ class EcotheologyContentSeeder extends Seeder
         }
     }
 }
+
