@@ -7,6 +7,16 @@ use App\Http\Controllers\PublicMonitorController;
 use App\Http\Controllers\PublicSmartBinController;
 use App\Http\Controllers\WasteDepositController;
 use App\Http\Controllers\ServoController;
+use App\Http\Controllers\EcotheologyController;
+
+// Smart Waste Station - 3-State Fullscreen Kiosk & Backdoor Admin
+Route::get('/kiosk', [EcotheologyController::class, 'kiosk'])->name('kiosk');
+Route::get('/backdoor', [EcotheologyController::class, 'backdoor'])->name('backdoor');
+Route::post('/backdoor/store', [EcotheologyController::class, 'store'])->name('backdoor.store');
+Route::put('/backdoor/update/{id}', [EcotheologyController::class, 'update'])->name('backdoor.update');
+Route::delete('/backdoor/delete/{id}', [EcotheologyController::class, 'destroy'])->name('backdoor.destroy');
+Route::get('/api/ecotheology/contents', [EcotheologyController::class, 'apiContents'])->name('api.ecotheology.contents');
+Route::get('/api/ecotheology/category', [EcotheologyController::class, 'apiCategoryContent'])->name('api.ecotheology.category');
 
 // Layar Tampilan Publik SmartBin (bin.ihi.my.id)
 Route::get('/', [PublicMonitorController::class, 'index'])->name('home');

@@ -41,32 +41,39 @@
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             
-            <!-- Logo & Brand -->
+            <!-- Logo & Brand UIN SGD -->
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-lg">
-                    S
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold text-base text-slate-900 tracking-tight">SmartBin IoT</span>
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                            Online
-                        </span>
+                <a href="/" class="flex items-center gap-2.5">
+                    <img src="/images/logo-uin.png" alt="Logo UIN Sunan Gunung Djati Bandung" class="h-11 w-auto object-contain">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-base text-slate-900 tracking-tight">SmartBin AI IoT</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                                Online
+                            </span>
+                        </div>
+                        <span class="text-[11px] text-slate-500 font-medium">UIN Sunan Gunung Djati Bandung</span>
                     </div>
-                    <span class="text-xs text-slate-500 font-mono">bin.ihi.my.id</span>
-                </div>
+                </a>
             </div>
 
-            <!-- Jam & Menu -->
-            <div class="flex items-center gap-4">
-                <div class="hidden sm:block text-right">
-                    <span id="header-clock" class="text-xs font-mono text-slate-600 font-medium block">--:--:-- WIB</span>
-                    <span class="text-[11px] text-slate-400">Waktu Server</span>
-                </div>
-
-                <a href="/login" class="px-3.5 py-1.5 rounded-lg border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors">
-                    Admin Login
+            <!-- Menu Cepat & Navigasi -->
+            <div class="flex items-center gap-2 sm:gap-3 text-xs font-semibold">
+                <a href="/education" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center gap-1 shadow-sm">
+                    🌱 Layar Edukasi
+                </a>
+                <a href="/auto-sort" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white transition hidden md:inline-flex items-center gap-1">
+                    🤖 Pemilah Otomatis
+                </a>
+                <a href="/scan-ai" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-slate-100 transition hidden sm:inline-block">
+                    📷 Scan AI
+                </a>
+                <a href="/locations" class="px-2.5 py-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-slate-100 transition hidden sm:inline-block">
+                    📍 Peta
+                </a>
+                <a href="/login" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 transition-colors">
+                    Admin
                 </a>
             </div>
 

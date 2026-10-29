@@ -1,106 +1,204 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-2xl text-gray-900 leading-tight">
-            {{ __('Pemilah Otomatis (AI Vision)') }}
-        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <img src="/images/logo-uin.png" alt="Logo UIN SGD" class="h-10 w-auto object-contain">
+                <div>
+                    <h2 class="font-extrabold text-xl text-slate-900 leading-tight">
+                        {{ __('Layar Pemilah Otomatis (AI Vision & Ekoteologi Islam)') }}
+                    </h2>
+                    <p class="text-xs text-slate-500 font-medium">UIN Sunan Gunung Djati Bandung &bull; Sistem Pemilahan Cerdas 4 Wadah</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="/education" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-xs font-bold transition">
+                    🌱 Layar Edukasi Lengkap
+                </a>
+                <a href="/" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-semibold transition">
+                    Live Monitor
+                </a>
+            </div>
+        </div>
     </x-slot>
 
-    <div id="auto-sort-container" class="py-8 bg-slate-50 min-h-screen" x-data="autoSortController()">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div id="auto-sort-container" class="py-6 bg-slate-50 min-h-screen" x-data="autoSortController()">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
+            <!-- Banner Ekoteologi Islam -->
+            <div class="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-sm border border-emerald-700/50 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-xl shrink-0">
+                        🕌
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-300">Prinsip Ekoteologi Islam</span>
+                            <span class="text-white/40">&bull;</span>
+                            <span class="text-xs text-emerald-100">QS. Al-A'raf: 56</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-100 mt-0.5 italic">
+                            "وَلَا تُفْسِدُوا فِي الْأَرْضِ بَعْدَ إِصْلَاحِهَا — Dan janganlah kamu berbuat kerusakan di bumi setelah (diciptakan) dengan baik."
+                        </p>
+                    </div>
+                </div>
+                <div class="shrink-0 text-right hidden lg:block">
+                    <span class="text-[11px] font-bold px-2.5 py-1 bg-white/10 rounded-full border border-white/20 text-emerald-200">
+                        UIN SGD KAMPUS HIJAU
+                    </span>
+                </div>
+            </div>
+
             <!-- Notifikasi Error/Success -->
             <div x-show="alert.show" x-transition class="rounded-xl p-4 border" :class="alert.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'" style="display: none;">
-                <p class="font-medium flex items-center gap-2">
+                <p class="font-medium flex items-center gap-2 text-sm">
                     <span x-text="alert.message"></span>
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Kiri: Kamera & Kontrol -->
-                <div class="lg:col-span-8 space-y-6">
+                <div class="lg:col-span-8 space-y-5">
                     <!-- Camera Feed -->
                     <div class="border border-gray-200 rounded-3xl overflow-hidden bg-white shadow-sm">
-                        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                AI Vision Stream
+                        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/70">
+                            <h3 class="text-sm font-bold text-gray-800 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                                Live Feed Area Deteksi Sampah
                             </h3>
                             
                             <!-- Toggle Auto Pilot -->
-                            <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-full border border-gray-200 shadow-sm">
-                                <span class="text-sm font-semibold text-gray-700">Mode Auto-Pilot</span>
+                            <div class="flex items-center gap-3 bg-white px-3.5 py-1.5 rounded-full border border-gray-200 shadow-sm">
+                                <span class="text-xs font-bold text-gray-700">Mode Auto-Pilot</span>
                                 <button @click="toggleAutoPilot()" 
-                                        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        :class="isAutoPilot ? 'bg-indigo-600' : 'bg-gray-200'">
-                                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-                                          :class="isAutoPilot ? 'translate-x-6' : 'translate-x-1'"></span>
+                                        class="relative inline-flex h-5 w-10 items-center rounded-full transition-colors focus:outline-none"
+                                        :class="isAutoPilot ? 'bg-emerald-600' : 'bg-gray-300'">
+                                    <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform"
+                                          :class="isAutoPilot ? 'translate-x-5' : 'translate-x-1'"></span>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="p-1">
-                            <div class="relative w-full bg-slate-900 flex items-center justify-center overflow-hidden rounded-2xl" style="min-height: 480px;">
+                        <div class="p-2 bg-slate-950">
+                            <div class="relative w-full aspect-[4/3] bg-black flex items-center justify-center overflow-hidden rounded-2xl">
                                 <!-- Canvas untuk Video Mulus -->
                                 <canvas id="camera-canvas" width="640" height="480" class="w-full h-full object-cover relative z-10"></canvas>
                                 
+                                <!-- Scanner Reticle Overlay -->
+                                <div class="absolute inset-8 border-2 border-dashed border-emerald-400/40 rounded-2xl pointer-events-none z-15 flex flex-col justify-between p-3">
+                                    <div class="flex justify-between">
+                                        <span class="w-4 h-4 border-t-2 border-l-2 border-emerald-400"></span>
+                                        <span class="w-4 h-4 border-t-2 border-r-2 border-emerald-400"></span>
+                                    </div>
+                                    <div class="text-center">
+                                        <span class="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-mono text-emerald-300 border border-emerald-500/30">
+                                            AREA PENEMPATAN SAMPAH
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="w-4 h-4 border-b-2 border-l-2 border-emerald-400"></span>
+                                        <span class="w-4 h-4 border-b-2 border-r-2 border-emerald-400"></span>
+                                    </div>
+                                </div>
+
                                 <!-- Overlay Scanner (Animasi saat scan) -->
                                 <div x-show="isScanning" class="absolute inset-0 z-20 pointer-events-none">
-                                    <div class="w-full h-1 bg-indigo-500/80 shadow-[0_0_15px_3px_rgba(99,102,241,0.5)] absolute top-0 left-0 animate-scan"></div>
+                                    <div class="w-full h-1 bg-emerald-400 shadow-[0_0_20px_5px_rgba(16,185,129,0.8)] absolute top-0 left-0 animate-scan"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tombol Aksi Manual -->
-                    <div class="flex justify-center">
+                    <!-- Tombol Aksi Manual & Status -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="text-xs text-gray-500">
+                            <span class="font-bold text-gray-700">Petunjuk:</span> Letakkan sampah di area latar hitam, sistem akan memindai secara otomatis.
+                        </div>
                         <button @click="scanNow()" :disabled="isScanning || isAutoPilot"
-                                class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 bg-indigo-600 border border-transparent rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl w-full md:w-auto">
+                                class="inline-flex items-center justify-center px-6 py-3 font-bold text-white transition-all bg-emerald-600 rounded-xl hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg text-xs sm:text-sm w-full sm:w-auto">
                             
-                            <svg x-show="!isScanning" class="w-6 h-6 mr-3 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <svg x-show="!isScanning" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <svg x-show="isScanning" class="w-4 h-4 mr-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             
-                            <svg x-show="isScanning" class="w-6 h-6 mr-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                            
-                            <span x-text="isScanning ? 'AI Sedang Menganalisis...' : 'Mulai Pindai Sampah (AI)'"></span>
+                            <span x-text="isScanning ? 'AI Sedang Menganalisis...' : 'Pindai Sampah Manual'"></span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Kanan: Hasil & Log -->
-                <div class="lg:col-span-4 space-y-6">
+                <!-- Kanan: Hasil & Status 4 Bins -->
+                <div class="lg:col-span-4 space-y-5">
                     <!-- Status Deteksi Terakhir -->
-                    <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
-                        <!-- Hiasan Background -->
-                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full opacity-50 blur-xl"></div>
-                        
-                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2 relative z-10">Hasil Deteksi AI</h3>
-                        
-                        <div class="flex items-end gap-3 relative z-10 mb-4">
-                            <span class="text-4xl font-black text-gray-900" x-text="lastDetection || '-'"></span>
+                    <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Hasil Klasifikasi AI</h3>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                MobileNetV2 + XGBoost
+                            </span>
                         </div>
                         
-                        <div class="bg-indigo-50 text-indigo-700 rounded-xl p-4 text-sm font-medium border border-indigo-100" x-text="lastAction || 'Sistem menunggu instruksi...'"></div>
+                        <div class="my-3">
+                            <span class="text-3xl font-black text-gray-900 tracking-tight" x-text="lastDetection || 'MENUNGGU SAMPAH...'"></span>
+                        </div>
+                        
+                        <div class="bg-emerald-50 text-emerald-800 rounded-xl p-3 text-xs font-semibold border border-emerald-100 flex items-center gap-2">
+                            <svg class="w-4 h-4 shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span x-text="lastAction || 'Letakkan objek sampah pada alas deteksi.'"></span>
+                        </div>
+                    </div>
+
+                    <!-- Status 4 Wadah Pemilahan -->
+                    <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm space-y-3">
+                        <h3 class="text-xs font-bold text-gray-600 uppercase tracking-wider">Wadah Aktuator Terhubung</h3>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="p-3 rounded-2xl border text-center transition-all"
+                                 :class="lastDetection === 'ORGANIK' ? 'bg-emerald-100 border-emerald-500 scale-105 shadow-sm' : 'bg-slate-50 border-slate-200'">
+                                <div class="text-lg">🥬</div>
+                                <div class="text-xs font-extrabold text-emerald-800 mt-1">BIN 1</div>
+                                <div class="text-[10px] text-slate-500 font-medium">Organik</div>
+                            </div>
+                            <div class="p-3 rounded-2xl border text-center transition-all"
+                                 :class="lastDetection === 'PLASTIK' ? 'bg-amber-100 border-amber-500 scale-105 shadow-sm' : 'bg-slate-50 border-slate-200'">
+                                <div class="text-lg">🧴</div>
+                                <div class="text-xs font-extrabold text-amber-800 mt-1">BIN 2</div>
+                                <div class="text-[10px] text-slate-500 font-medium">Plastik</div>
+                            </div>
+                            <div class="p-3 rounded-2xl border text-center transition-all"
+                                 :class="lastDetection === 'KERTAS' ? 'bg-blue-100 border-blue-500 scale-105 shadow-sm' : 'bg-slate-50 border-slate-200'">
+                                <div class="text-lg">📄</div>
+                                <div class="text-xs font-extrabold text-blue-800 mt-1">BIN 3</div>
+                                <div class="text-[10px] text-slate-500 font-medium">Kertas</div>
+                            </div>
+                            <div class="p-3 rounded-2xl border text-center transition-all"
+                                 :class="(lastDetection === 'LOGAM' || lastDetection === 'LOGAM_KACA') ? 'bg-rose-100 border-rose-500 scale-105 shadow-sm' : 'bg-slate-50 border-slate-200'">
+                                <div class="text-lg">🥫</div>
+                                <div class="text-xs font-extrabold text-rose-800 mt-1">BIN 4</div>
+                                <div class="text-[10px] text-slate-500 font-medium">Logam/Kaca</div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Log Aktivitas -->
-                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col" style="height: 400px;">
-                        <div class="p-5 border-b border-gray-50">
-                            <h3 class="font-bold text-gray-800">Riwayat Pemilahan</h3>
+                    <div class="bg-white rounded-3xl border border-gray-100 shadow-sm flex flex-col" style="height: 280px;">
+                        <div class="p-4 border-b border-gray-50 flex items-center justify-between">
+                            <h3 class="font-bold text-xs text-gray-800 uppercase tracking-wider">Riwayat Pemilahan</h3>
+                            <span class="text-[10px] text-gray-400 font-mono" x-text="logs.length + ' item'"></span>
                         </div>
-                        <div class="flex-1 p-5 overflow-y-auto space-y-4" id="log-container">
+                        <div class="flex-1 p-4 overflow-y-auto space-y-3" id="log-container">
                             <template x-for="log in logs" :key="log.id">
-                                <div class="flex items-start gap-3 text-sm animate-fade-in-up">
+                                <div class="flex items-start gap-2.5 text-xs animate-fade-in-up">
                                     <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" :class="getDotColor(log.type)"></div>
-                                    <div>
-                                        <span class="font-bold text-gray-700" x-text="log.type"></span>
-                                        <p class="text-gray-500 mt-0.5" x-text="log.message"></p>
-                                        <span class="text-xs text-gray-400 mt-1 block" x-text="log.time"></span>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-bold text-gray-800" x-text="log.type"></span>
+                                            <span class="text-[10px] text-gray-400 font-mono" x-text="log.time"></span>
+                                        </div>
+                                        <p class="text-gray-500 mt-0.5 text-[11px]" x-text="log.message"></p>
                                     </div>
                                 </div>
                             </template>
                             
                             <div x-show="logs.length === 0" class="h-full flex flex-col items-center justify-center text-gray-400">
-                                <svg class="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                                Belum ada riwayat scan
+                                <svg class="w-8 h-8 mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                <span class="text-xs">Belum ada riwayat pemilahan</span>
                             </div>
                         </div>
                     </div>
@@ -130,63 +228,54 @@
 
     <!-- Script Video Player & Motion Detection -->
     <script>
-        // Variabel global untuk deteksi gerakan
         let lastMotionData = null;
-        let motionState = 'IDLE'; // IDLE -> MOVING -> STABILIZING -> SCANNED
+        let motionState = 'IDLE';
         let stabilizeTimer = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('camera-canvas');
             const ctx = canvas.getContext('2d');
             
-            // Canvas tersembunyi berukuran kecil untuk memproses gerakan agar tidak berat
             const motionCanvas = document.createElement('canvas');
             motionCanvas.width = 64;
             motionCanvas.height = 48;
             const motionCtx = motionCanvas.getContext('2d', { willReadFrequently: true });
 
             function checkMotion() {
-                // Ambil state dari komponen Alpine.js
-                const alpineData = document.getElementById('auto-sort-container').__x.$data;
+                const el = document.getElementById('auto-sort-container');
+                if (!el || !el.__x) return;
+                const alpineData = el.__x.$data;
                 
-                // Jangan periksa gerakan jika Auto Pilot mati atau sedang proses scan
                 if (!alpineData.isAutoPilot || alpineData.isScanning) {
                     motionState = 'IDLE';
                     return;
                 }
 
-                // Lukis gambar dari kanvas utama ke kanvas kecil
                 motionCtx.drawImage(canvas, 0, 0, motionCanvas.width, motionCanvas.height);
                 const currentData = motionCtx.getImageData(0, 0, motionCanvas.width, motionCanvas.height).data;
 
                 if (lastMotionData) {
                     let diffCount = 0;
-                    // Bandingkan pixel frame saat ini dengan frame sebelumnya
                     for (let i = 0; i < currentData.length; i += 4) {
                         const rDiff = Math.abs(currentData[i] - lastMotionData[i]);
                         const gDiff = Math.abs(currentData[i+1] - lastMotionData[i+1]);
                         const bDiff = Math.abs(currentData[i+2] - lastMotionData[i+2]);
-                        
-                        // Jika warna berubah lebih dari ambang batas (cahaya/bayangan/objek)
                         if (rDiff + gDiff + bDiff > 60) diffCount++;
                     }
 
                     const changePercentage = (diffCount / (motionCanvas.width * motionCanvas.height)) * 100;
 
                     if (changePercentage > 3) { 
-                        // Jika lebih dari 3% layar berubah = Ada objek masuk/bergerak
                         if (motionState === 'IDLE' || motionState === 'STABILIZING') {
                             motionState = 'MOVING';
                             clearTimeout(stabilizeTimer);
-                            alpineData.lastAction = "Terdeteksi pergerakan objek...";
+                            alpineData.lastAction = "Terdeteksi pergerakan objek sampah...";
                         }
                     } else {
-                        // Jika layar tidak berubah (objek sudah diletakkan dan diam)
                         if (motionState === 'MOVING') {
                             motionState = 'STABILIZING';
                             alpineData.lastAction = "Membidik objek (Tahan 1 detik)...";
                             
-                            // Tunggu 1 detik agar objek benar-benar diam, lalu jepret!
                             stabilizeTimer = setTimeout(() => {
                                 if (motionState === 'STABILIZING') {
                                     motionState = 'IDLE';
@@ -196,8 +285,6 @@
                         }
                     }
                 }
-                
-                // Simpan frame saat ini sebagai acuan untuk frame berikutnya
                 lastMotionData = new Uint8ClampedArray(currentData);
             }
 
@@ -208,21 +295,17 @@
                 
                 img.onload = () => {
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // Cek pergerakan setiap kali frame baru tiba
                     checkMotion();
-                    
                     setTimeout(fetchNextFrame, 100); 
                 };
                 
                 img.onerror = () => {
-                    setTimeout(fetchNextFrame, 100);
+                    setTimeout(fetchNextFrame, 150);
                 };
             }
             fetchNextFrame();
         });
 
-        // Alpine.js Logic
         function autoSortController() {
             return {
                 isScanning: false,
@@ -240,7 +323,7 @@
                 toggleAutoPilot() {
                     this.isAutoPilot = !this.isAutoPilot;
                     if (this.isAutoPilot) {
-                        this.showAlert('success', 'Mode Auto-Pilot Diaktifkan. Sistem menunggu objek diletakkan.');
+                        this.showAlert('success', 'Mode Auto-Pilot Aktif. Letakkan sampah di depan kamera.');
                         this.lastAction = "Menunggu objek masuk kamera...";
                     } else {
                         this.showAlert('success', 'Mode Auto-Pilot Dinonaktifkan.');
@@ -251,14 +334,17 @@
                 async scanNow() {
                     if (this.isScanning) return;
                     this.isScanning = true;
-                    this.lastAction = "Memproses gambar dengan AI...";
+                    this.lastAction = "Mengekstrak fitur citra & inferensi AI...";
                     
                     try {
+                        const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+                        const csrfToken = tokenMeta ? tokenMeta.getAttribute('content') : '';
+
                         const response = await fetch('/api/ai/scan', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': csrfToken
                             }
                         });
                         
@@ -268,7 +354,6 @@
                             this.lastDetection = data.detection;
                             this.lastAction = data.action;
                             
-                            // Tambah ke log
                             this.logs.unshift({
                                 id: Date.now(),
                                 type: data.detection,
@@ -276,10 +361,8 @@
                                 time: new Date().toLocaleTimeString()
                             });
                             
-                            // Simpan max 20 log
-                            if(this.logs.length > 20) this.logs.pop();
+                            if (this.logs.length > 20) this.logs.pop();
                             
-                            // Beri jeda 3 detik setelah membuang sampah, sebelum bisa memindai objek baru
                             if (this.isAutoPilot) {
                                 setTimeout(() => {
                                     if (this.isAutoPilot) this.lastAction = "Menunggu objek masuk kamera...";
@@ -287,10 +370,10 @@
                             }
                         } else {
                             this.showAlert('error', data.message || 'Terjadi kesalahan sistem.');
-                            if (this.isAutoPilot) this.toggleAutoPilot(); // Matikan auto jika error (misal API key habis)
+                            if (this.isAutoPilot) this.toggleAutoPilot();
                         }
                     } catch (error) {
-                        this.showAlert('error', 'Gagal menghubungi server.');
+                        this.showAlert('error', 'Gagal menghubungi server AI.');
                         if (this.isAutoPilot) this.toggleAutoPilot();
                     } finally {
                         this.isScanning = false;
@@ -300,9 +383,10 @@
                 getDotColor(type) {
                     const colors = {
                         'KERTAS': 'bg-blue-500',
-                        'PLASTIK': 'bg-red-500',
-                        'ORGANIK': 'bg-green-500',
-                        'LOGAM': 'bg-gray-500',
+                        'PLASTIK': 'bg-amber-500',
+                        'ORGANIK': 'bg-emerald-500',
+                        'LOGAM': 'bg-rose-500',
+                        'LOGAM_KACA': 'bg-rose-500',
                         'TIDAK_DIKETAHUI': 'bg-yellow-400'
                     };
                     return colors[type] || 'bg-indigo-500';
